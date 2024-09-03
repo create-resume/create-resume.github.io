@@ -17,6 +17,8 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
+    padding-top: 60px; /* גובה ה-nav */
+    direction: rtl;
 }
 
 .container {
@@ -25,20 +27,18 @@ body {
     padding: 0 20px;
 }
 
-header {
+nav {
     background-color: var(--white);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     position: fixed;
     width: 100%;
     top: 0;
-    z-index: 1000;
-}
-
-nav {
+    right: 0;
+    z-index: 1001;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
 }
 
 .logo {
@@ -81,7 +81,7 @@ nav ul li a:hover {
 }
 
 main {
-    margin-top: 60px;
+    margin-top: 60px; /* גובה ה-nav */
 }
 
 .hero {
@@ -172,8 +172,8 @@ h2 {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1001;
-    left: 0;
+    z-index: 1002;
+    right: 0;
     top: 0;
     width: 100%;
     height: 100%;
@@ -290,82 +290,4 @@ footer {
 .cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-
-
-
-
-
-
-
-
-/* עיצוב לתבנית הקלאסית */
-.classic-resume {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.classic-resume header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.classic-resume h2 {
-    border-bottom: 2px solid #333;
-    padding-bottom: 5px;
-}
-
-.classic-resume .job, .classic-resume .education {
-    margin-bottom: 15px;
-}
-
-.classic-resume .company-date {
-    font-style: italic;
-}
-
-/* עיצוב לתבנית היצירתית */
-.creative-resume {
-    display: flex;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 1000px;
-    margin: 0 auto;
-    background-color: #f0f0f0;
-}
-
-.creative-resume .sidebar {
-    width: 30%;
-    background-color: #333;
-    color: white;
-    padding: 20px;
-}
-
-.creative-resume .main-content {
-    width: 70%;
-    padding: 20px;
-}
-
-.creative-resume .profile h1 {
-    margin-bottom: 10px;
-}
-
-.creative-resume .skills ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.creative-resume .skills li {
-    margin-bottom: 5px;
-}
-
-.creative-resume .job, .creative-resume .education-item {
-    margin-bottom: 20px;
-}
-
-.creative-resume .dates {
-    font-style: italic;
-    color: #666;
 }

@@ -1,97 +1,79 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const startButton = document.getElementById('start-button');
-    const createResumeButton = document.getElementById('create-resume');
-    const modal = document.getElementById('resume-builder');
-    const closeButton = document.querySelector('.close');
     const form = document.getElementById('resume-form');
     const previewContainer = document.getElementById('resume-preview');
     const generatePdfButton = document.getElementById('generate-pdf');
     console.log('Event listeners set up');
-    console.log('Start button:', startButton);
-    console.log('Create resume button:', createResumeButton);
 
-    startButton.addEventListener('click', openModal);
-    createResumeButton.addEventListener('click', openModal);
-    closeButton.addEventListener('click', closeModal);
-    window.addEventListener('click', outsideClick);
-    generatePdfButton.addEventListener('click', generatePDF);
+function updatePreview() {
+    console.log('Updating preview...');
+    const formData = new FormData(form);
+    const resumeData = {
+        fullName: formData.get('fullName') || '',
+        email: formData.get('email') || '',
+        phone: formData.get('phone') || '',
+        summary: formData.get('summary') || '',
+        experience: [],
+        education: [],
+        skills: formData.get('skills') || ''
+    };
 
-    function openModal() {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        loadForm();
-    }
+    // Handle multiple job entries
+    const jobTitles = formData.getAll('job-title[]');
+    const companies = formData.getAll('company[]');
+    const jobDates = formData.getAll('job-dates[]');
+    const jobDescriptions = formData.getAll('job-description[]');
 
-    function closeModal() {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    function outsideClick(e) {
-        if (e.target == modal) {
-            closeModal();
+    for (let i = 0; i < jobTitles.length; i++) {
+        if (jobTitles[i]) {
+            resumeData.experience.push({
+                title: jobTitles[i],
+                company: companies[i] || '',
+                dates: jobDates[i] || '',
+                description: jobDescriptions[i] || ''
+            });
         }
     }
 
-    function updatePreview() {
-        console.log('Updating preview...');
-        const formData = new FormData(form);
-        const resumeData = {
-            fullName: formData.get('fullName') || '',
-            email: formData.get('email') || '',
-            phone: formData.get('phone') || '',
-            summary: formData.get('summary') || '',
-            experience: [],
-            education: [],
-            skills: formData.get('skills') || ''
-        };
+    // Handle multiple education entries
+    const degrees = formData.getAll('degree[]');
+    const institutions = formData.getAll('institution[]');
+    const educationDates = formData.getAll('education-dates[]');
 
-        // Handle multiple job entries
-        const jobTitles = formData.getAll('job-title[]');
-        const companies = formData.getAll('company[]');
-        const jobDates = formData.getAll('job-dates[]');
-        const jobDescriptions = formData.getAll('job-description[]');
-
-        for (let i = 0; i < jobTitles.length; i++) {
-            if (jobTitles[i]) {
-                resumeData.experience.push({
-                    title: jobTitles[i],
-                    company: companies[i] || '',
-                    dates: jobDates[i] || '',
-                    description: jobDescriptions[i] || ''
-                });
-            }
-        }
-
-        // Handle multiple education entries
-        const degrees = formData.getAll('degree[]');
-        const institutions = formData.getAll('institution[]');
-        const educationDates = formData.getAll('education-dates[]');
-
-        for (let i = 0; i < degrees.length; i++) {
-            if (degrees[i]) {
-                resumeData.education.push({
-                    degree: degrees[i],
-                    institution: institutions[i] || '',
-                    dates: educationDates[i] || ''
-                });
-            }
-        }
-
-        console.log('Resume data:', resumeData);
-
-        // Update preview with selected template
-        const selectedTemplate = document.querySelector('input[name="template"]:checked').value;
-        console.log('Selected template:', selectedTemplate);
-
-        if (templates && typeof templates[selectedTemplate] === 'function') {
-            console.log('Applying template...');
-            previewContainer.innerHTML = templates[selectedTemplate](resumeData);
-        } else {
-            console.error('Template not found or not a function:', selectedTemplate);
-            previewContainer.innerHTML = '<p>Error: Could not load template</p>';
+    for (let i = 0; i < degrees.length; i++) {
+        if (degrees[i]) {
+            resumeData.education.push({
+                degree: degrees[i],
+                institution: institutions[i] || '',
+                dates: educationDates[i] || ''
+            });
         }
     }
+
+    console.log('Resume data:', resumeData);
+
+    // Update preview with selected template
+    const selectedTemplate = document.querySelector('input[name="template"]:checked').value;
+    console.log('Selected template:', selectedTemplate);
+
+    if (templates && typeof templates[selectedTemplate] === 'function') {
+        console.log('Applying template...');
+        previewContainer.innerHTML = templates[selectedTemplate](resumeData);
+    } else {
+        console.error('Template not found or not a function:', selectedTemplate);
+        previewContainer.innerHTML = '<p>Error: Could not load template</p>';
+    }
+
+    // Update header separately
+    const headerElement = previewContainer.querySelector('header');
+    if (headerElement) {
+        headerElement.innerHTML = `
+            <h1>${resumeData.fullName}</h1>
+            <div class="contact-info">
+                ${resumeData.email} | ${resumeData.phone}
+            </div>
+        `;
+    }
+}
 
     function addExperienceField() {
         const container = document.getElementById('experience-container');
@@ -200,8 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePreview();
     }
 
-    function generatePDF() {
-        const element = document.getElementById('resume-preview');
-        html2pdf().from(element).save('resume.pdf');
-    }
+    loadForm();
+
+    generatePdfButton.addEventListener('click', generatePDF);
 });
